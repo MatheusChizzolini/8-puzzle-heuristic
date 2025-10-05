@@ -1,12 +1,14 @@
-import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { bestFirst, parseFinalState } from "../utils/solve";
 
 type FormProps = {
-  setCells: (cells: number[]) => void;
+  initialBoard: number[];
+  setBoard: (board: number[]) => void;
 };
 
-export function Form({ setCells }: FormProps) {
-  const [finalState, setFinalState] = useState("087654321");
+export function Form({ initialBoard, setBoard }: FormProps) {
+  const [finalState, setFinalState] = useState("123456780");
   const [heuristic, setHeuristic] = useState("manhattan");
   const [algorithm, setAlgorithm] = useState("astar");
   const [level, setLevel] = useState("first");
@@ -18,11 +20,15 @@ export function Form({ setCells }: FormProps) {
       [array[i], array[j]] = [array[j], array[i]];
     }
 
-    setCells(array);
+    setBoard(array);
   }
 
   function handleSolve(event: React.FormEvent) {
     event.preventDefault();
+    console.log("Initial board:", initialBoard);
+    console.log("Parsed final state:", parseFinalState(finalState));
+    const result = bestFirst(initialBoard, finalState, heuristic, level);
+    console.log(result);
   }
 
   return (
@@ -73,7 +79,7 @@ export function Form({ setCells }: FormProps) {
           className="appearance-none w-full rounded-md hover:cursor-pointer bg-zinc-700 text-md border-2 border-zinc-600 focus:border-indigo-600 transition py-1 px-2"
         >
           <option value="astar">A*</option>
-          <option value="bestfirst">Best First</option>
+          <option value="bestfirst">Best-First</option>
         </select>
         <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500" />
       </div>
