@@ -8,7 +8,7 @@ export function Board({ board }: BoardProps) {
       {board.map((value, index) => (
         <div
           key={index}
-          className={`w-30 h-30 flex items-center justify-center text-xl font-bold
+          className={`w-30 h-30 flex items-center justify-center text-3xl font-bold
             rounded-md ${value === 0 ? "invisible" : "bg-indigo-600"}`}
         >
           {value}
