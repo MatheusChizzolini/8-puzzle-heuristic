@@ -9,7 +9,7 @@ export default function App() {
   const [result, setResult] = useState<Result | null>(null);
 
   useEffect(() => {
-    if (result?.path) {
+    if (result?.solvable && result.path && result.path.length > 0) {
       let i = 0;
       const interval = setInterval(() => {
         setBoard(result.path[i]);
