@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { Result } from "../types/result";
-import { bestFirst } from "../utils/solve";
+import { aStar, bestFirst } from "../utils/solve";
 
 type FormProps = {
   initialBoard: number[];
@@ -30,7 +30,7 @@ export function Form({ initialBoard, setBoard, setResult }: FormProps) {
     event.preventDefault();
     let result: Result | null = null;
     if (algorithm === "astar") {
-      // Calma
+      result = aStar(initialBoard, finalState, heuristic, level);
     } else {
       result = bestFirst(initialBoard, finalState, heuristic, level);
     }

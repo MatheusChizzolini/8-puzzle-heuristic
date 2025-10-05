@@ -135,3 +135,84 @@ export function bestFirst(
     };
   }
 }
+
+export function aStar(
+  initialBoard: number[],
+  finalStateString: string,
+  heuristic: string,
+  level: string
+) {
+  const startTime = performance.now();
+  if (!isSolvable(initialBoard, parseFinalState(finalStateString))) {
+    return { solvable: false };
+  } else {
+    const finalState = parseFinalState(finalStateString);
+    const startHeuristic = getHeuristic(initialBoard, finalState, heuristic);
+    const queue = new PriorityQueue<Node>();
+    const visitedBoards = new Set<string>();
+    const startNode: Node = {
+      board: initialBoard,
+      g: 0,
+      h: startHeuristic,
+      f: startHeuristic,
+    };
+    queue.enqueue(startNode, startNode.f);
+    let nodesExpanded = 0;
+    while (!queue.isEmpty()) {
+      const current = queue.dequeue()!;
+      const currentBoardString = current.board.toString();
+      if (!visitedBoards.has(currentBoardString)) {
+        nodesExpanded++;
+        visitedBoards.add(currentBoardString);
+        if (arraysEqual(current.board, finalState)) {
+          return {
+            solvable: true,
+            visitedNodes: nodesExpanded,
+            time: performance.now() - startTime,
+            solutionLength: current.g,
+          };
+        }
+
+        const children = getChildren(current.board);
+        for (const child of children) {
+          const childString = child.toString();
+          if (!visitedBoards.has(childString)) {
+            const childHeuristic = getHeuristic(child, finalState, heuristic);
+            let score = childHeuristic;
+            if (level === "second") {
+              let minGrand = childHeuristic;
+              const grands = getChildren(child);
+              for (const grand of grands) {
+                const grandHeuristic = getHeuristic(
+                  grand,
+                  finalState,
+                  heuristic
+                );
+                if (grandHeuristic < minGrand) {
+                  minGrand = grandHeuristic;
+                }
+              }
+
+              score = Math.min(childHeuristic, minGrand);
+            }
+
+            const childNode: Node = {
+              board: child,
+              g: current.g + 1,
+              h: childHeuristic,
+              f: current.g + 1 + score,
+            };
+
+            queue.enqueue(childNode, childNode.f);
+          }
+        }
+      }
+    }
+
+    return {
+      solvable: true,
+      visitedNodes: nodesExpanded,
+      time: performance.now() - startTime,
+    };
+  }
+}
