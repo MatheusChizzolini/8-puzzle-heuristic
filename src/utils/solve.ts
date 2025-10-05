@@ -29,7 +29,7 @@ function getChildren(board: number[]): number[][] {
   return children;
 }
 
-export function parseFinalState(finalState: string): number[] {
+function parseFinalState(finalState: string): number[] {
   return finalState.split("").map((char) => Number(char));
 }
 
@@ -86,7 +86,6 @@ export function bestFirst(
         if (arraysEqual(current.board, finalState)) {
           return {
             solvable: true,
-            found: true,
             visitedNodes: nodesExpanded,
             time: performance.now() - startTime,
             solutionLength: current.g,
@@ -131,7 +130,6 @@ export function bestFirst(
 
     return {
       solvable: true,
-      found: false,
       visitedNodes: nodesExpanded,
       time: performance.now() - startTime,
     };

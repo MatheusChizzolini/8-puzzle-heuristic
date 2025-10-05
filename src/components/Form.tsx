@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { bestFirst, parseFinalState } from "../utils/solve";
+import type { Result } from "../types/result";
+import { bestFirst } from "../utils/solve";
 
 type FormProps = {
   initialBoard: number[];
   setBoard: (board: number[]) => void;
+  setResult: (result: Result | null) => void;
 };
 
-export function Form({ initialBoard, setBoard }: FormProps) {
+export function Form({ initialBoard, setBoard, setResult }: FormProps) {
   const [finalState, setFinalState] = useState("123456780");
   const [heuristic, setHeuristic] = useState("manhattan");
   const [algorithm, setAlgorithm] = useState("astar");
@@ -21,14 +23,19 @@ export function Form({ initialBoard, setBoard }: FormProps) {
     }
 
     setBoard(array);
+    setResult(null);
   }
 
   function handleSolve(event: React.FormEvent) {
     event.preventDefault();
-    console.log("Initial board:", initialBoard);
-    console.log("Parsed final state:", parseFinalState(finalState));
-    const result = bestFirst(initialBoard, finalState, heuristic, level);
-    console.log(result);
+    let result: Result | null = null;
+    if (algorithm === "astar") {
+      // Calma
+    } else {
+      result = bestFirst(initialBoard, finalState, heuristic, level);
+    }
+
+    setResult(result);
   }
 
   return (
