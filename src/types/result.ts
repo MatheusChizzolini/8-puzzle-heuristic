@@ -3,4 +3,5 @@ export interface Result {
   visitedNodes?: number;
   time?: number;
   solutionLength?: number;
+  path: number[][];
 }

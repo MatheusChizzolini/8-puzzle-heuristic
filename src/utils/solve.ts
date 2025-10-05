@@ -63,7 +63,7 @@ export function bestFirst(
 ) {
   const startTime = performance.now();
   if (!isSolvable(initialBoard, parseFinalState(finalStateString))) {
-    return { solvable: false };
+    return { solvable: false, path: [] };
   } else {
     const finalState = parseFinalState(finalStateString);
     const startHeuristic = getHeuristic(initialBoard, finalState, heuristic);
@@ -74,6 +74,7 @@ export function bestFirst(
       g: 0,
       h: startHeuristic,
       f: 0,
+      parent: null,
     };
     queue.enqueue(startNode, startHeuristic);
     let nodesExpanded = 0;
@@ -84,11 +85,19 @@ export function bestFirst(
         nodesExpanded++;
         visitedBoards.add(currentBoardString);
         if (arraysEqual(current.board, finalState)) {
+          const path: number[][] = [];
+          let node: Node | null | undefined = current;
+          while (node) {
+            path.unshift(node.board);
+            node = node.parent;
+          }
+
           return {
             solvable: true,
             visitedNodes: nodesExpanded,
             time: performance.now() - startTime,
             solutionLength: current.g,
+            path,
           };
         }
 
@@ -120,6 +129,7 @@ export function bestFirst(
               g: current.g + 1,
               h: childHeuristic,
               f: 0,
+              parent: current,
             };
 
             queue.enqueue(childNode, score);
@@ -132,6 +142,7 @@ export function bestFirst(
       solvable: true,
       visitedNodes: nodesExpanded,
       time: performance.now() - startTime,
+      path: [],
     };
   }
 }
@@ -144,7 +155,7 @@ export function aStar(
 ) {
   const startTime = performance.now();
   if (!isSolvable(initialBoard, parseFinalState(finalStateString))) {
-    return { solvable: false };
+    return { solvable: false, path: [] };
   } else {
     const finalState = parseFinalState(finalStateString);
     const startHeuristic = getHeuristic(initialBoard, finalState, heuristic);
@@ -155,6 +166,7 @@ export function aStar(
       g: 0,
       h: startHeuristic,
       f: startHeuristic,
+      parent: null,
     };
     queue.enqueue(startNode, startNode.f);
     let nodesExpanded = 0;
@@ -165,11 +177,19 @@ export function aStar(
         nodesExpanded++;
         visitedBoards.add(currentBoardString);
         if (arraysEqual(current.board, finalState)) {
+          const path: number[][] = [];
+          let node: Node | null | undefined = current;
+          while (node) {
+            path.unshift(node.board);
+            node = node.parent;
+          }
+
           return {
             solvable: true,
             visitedNodes: nodesExpanded,
             time: performance.now() - startTime,
             solutionLength: current.g,
+            path,
           };
         }
 
@@ -201,6 +221,7 @@ export function aStar(
               g: current.g + 1,
               h: childHeuristic,
               f: current.g + 1 + score,
+              parent: current,
             };
 
             queue.enqueue(childNode, childNode.f);
@@ -213,6 +234,7 @@ export function aStar(
       solvable: true,
       visitedNodes: nodesExpanded,
       time: performance.now() - startTime,
+      path: [],
     };
   }
 }

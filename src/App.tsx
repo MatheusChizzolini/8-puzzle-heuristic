@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form } from "./components/Form";
 import { Board } from "./components/Board";
 import { Results } from "./components/Results";
@@ -7,6 +7,19 @@ import type { Result } from "./types/result";
 export default function App() {
   const [board, setBoard] = useState<number[]>([1, 2, 3, 0, 4, 6, 7, 5, 8]);
   const [result, setResult] = useState<Result | null>(null);
+
+  useEffect(() => {
+    if (result?.path) {
+      let i = 0;
+      const interval = setInterval(() => {
+        setBoard(result.path[i]);
+        i++;
+        if (i >= result.path.length) {
+          clearInterval(interval);
+        }
+      }, 500);
+    }
+  }, [result]);
 
   return (
     <main className="bg-zinc-900 text-zinc-50 min-h-screen flex items-center justify-center flex-col p-8">

@@ -3,4 +3,5 @@ export interface Node {
   g: number;
   h: number;
   f: number;
+  parent?: Node | null;
 }
